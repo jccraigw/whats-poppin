@@ -1,8 +1,14 @@
-var mongoose = require('mongoose');
-var connectionString = 'mongodb://localhost/whats_poppin';
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+const connectionString = 'mongodb://localhost/whats_poppin';
 
 
-mongoose.connect(connectionString);
+mongoose.connect(
+  process.env.MONGODB_URI || "mongodb://localhost/whats_poppin",
+  {
+    useMongoClient: true
+  }
+);
 
 
 mongoose.connection.on('connected', function(){

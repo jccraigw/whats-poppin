@@ -1,16 +1,38 @@
-var express = require('express');
-var router = express.Router();
-var User = require('../models/User');
-var bodyParser = require('body-parser');
-var bcrypt = require('bcrypt');
-var session = require('express-session');
+const db = require("../models");
 
+//CRUD routes below
+module.exports ={
 
-router.use(bodyParser.urlencoded({extended: true}));
-
-router.get('/', function(req, res){
-
-  res.json(true);
-})
-
-module.exports = router;
+	findAll: function(req, res){
+		db.User
+			.find(req.query)
+			.sort({date: -1})
+			.then(dbModel => res.json(dbModel))
+			.catch(err => res.status(442).json(err));
+	},
+	findById: function(req, res) {
+    	db.User
+	     	.findById(req.params.id)
+	      	.then(dbModel => res.json(dbModel))
+	      	.catch(err => res.status(422).json(err));
+  	},
+	create: function(req, res){
+		db.User
+			.create(req.body)
+			.then(dbModel => res.json(dbModel))
+			.catch(err => res.status(442).json(err));
+	},
+	update: function(req, res) {
+    	db.User
+		    .findOneAndUpdate({ _id: req.params.id }, req.body)
+		    .then(dbModel => res.json(dbModel))
+		    .catch(err => res.status(422).json(err));
+  	},
+  	remove: function(req, res) {
+    	db.User
+		    .findById({ _id: req.params.id })
+		    .then(dbModel => dbModel.remove())
+		    .then(dbModel => res.json(dbModel))
+		    .catch(err => res.status(422).json(err));
+	}
+};

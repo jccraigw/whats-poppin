@@ -1,30 +1,32 @@
 //pulls in express
-var express = require('express');
+const express = require('express');
 //app is express
-var app = express();
-
+const app = express();
+const routes = require("./routes");
 
 //create server to host
-var server = require('http').createServer(app);
-var path = require('path');
+const server = require('http').createServer(app);
+const path = require('path');
+const PORT = process.env.PORT || 3001;
 
 //require express session to authenticate user
-var session = require('express-session');
+const session = require('express-session');
 
 //get parameters from body
-var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({extended: true}));
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
 //make public folder static so that it can be accessed public
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static("client/build"));
 
 //connect to database
 require('./db/db.js');
 
 //connect to the model
-var User = require('./models/User.js');
-var Post = require('./models/Post.js');
-var Comment = require('./models/Comment.js');
+const User = require('./models/User.js');
+const Post = require('./models/Post.js');
+const Comment = require('./models/Comment.js');
 
 app.use(session({
 		secret: "shhh, I'm a password",
@@ -35,22 +37,11 @@ app.use(session({
 
 }));
 
-//connect to controller
-var UserController = require('./controllers/UserController');
-var PostController = require('./controllers/PostController');
-var CommnetController = require('./controllers/CommentController');
 
-app.use('/', UserController);
-// app.use('/post', PostController);
-// app.use('/comment', CommnetController);
+app.use(routes);
 
 
+server.listen(PORT, function(){
 
-
-
-
-
-server.listen(3000, function(){
-
-	console.log("listening on port 3000");
+	console.log("listening on port 3001");
 })
